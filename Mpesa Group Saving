@@ -1,0 +1,104 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <map>
+
+using namespace std;
+
+class Member {
+public:
+    string phone;
+    string pin;
+    bool isApproved;
+
+    Member(string _phone, string _pin) : phone(_phone), pin(_pin), isApproved(false) {}
+};
+
+class Account {
+public:
+    string accountName;
+    vector<Member> members;
+
+    Account(string _accountName) : accountName(_accountName) {}
+
+    void addMember(string phone, string pin) {
+        members.push_back(Member(phone, pin));
+    }
+};
+
+class GroupAccount : public Account {
+public:
+    GroupAccount(string _accountName) : Account(_accountName) {}
+
+    void deposit() {
+        cout << "Enter the amount to deposit: ";
+        // Implement deposit logic here
+        cout << "Deposit successful. Notification sent to all members." << endl;
+    }
+
+    void withdraw() {
+        cout << "Enter the withdrawal amount: ";
+        // Implement withdrawal logic here
+        cout << "Withdrawal request sent to all members for approval." << endl;
+
+        for (Member &member : members) {
+            cout << "Notification to approve withdrawal sent to " << member.phone << endl;
+            cout << "Enter PIN to approve: ";
+            string enteredPIN;
+            cin >> enteredPIN;
+
+            if (enteredPIN == member.pin) {
+                member.isApproved = true;
+            } else {
+                cout << "PIN incorrect. Withdrawal approval denied." << endl;
+                return;
+            }
+        }
+
+        for (const Member &member : members) {
+            if (!member.isApproved) {
+                cout << "Withdrawal approval denied by " << member.phone << ". Cannot proceed." << endl;
+                return;
+            }
+        }
+
+        // Implement the withdrawal action here
+        cout << "Withdrawal approved by all members. Proceeding with withdrawal." << endl;
+    }
+};
+
+class PersonalAccount : public Account {
+public:
+    PersonalAccount(string _accountName) : Account(_accountName) {}
+
+    void deposit() {
+        cout << "Enter the amount to deposit: ";
+        // Implement deposit logic here
+        cout << "Deposit successful." << endl;
+    }
+
+    void withdraw() {
+        cout << "Enter the withdrawal amount: ";
+        // Implement withdrawal logic here
+        cout << "Withdrawal successful." << endl;
+    }
+};
+
+int main() {
+    GroupAccount groupAccount("GroupAccount1");
+    PersonalAccount personalAccount("PersonalAccount1");
+
+    // Add members to the group account
+    groupAccount.addMember("1234567890", "1234");
+    groupAccount.addMember("9876543210", "5678");
+
+    // Deposit and withdraw from group account
+    groupAccount.deposit();
+    groupAccount.withdraw();
+
+    // Deposit and withdraw from personal account
+    personalAccount.deposit();
+    personalAccount.withdraw();
+
+    return 0;
+}
